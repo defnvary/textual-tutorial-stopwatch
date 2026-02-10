@@ -4,31 +4,38 @@ from textual.widgets import Button, Digits, Footer, Header
 
 
 class TimeDisplay(Digits):
-    """A widget to display elapsed time"""
+    """widget to display elapsed time"""
 
 
 class Stopwatch(HorizontalGroup):
+    """a stopwatch widget"""
+
     def compose(self) -> ComposeResult:
         yield Button("Start", id="start", variant="success")
         yield Button("Stop", id="stop", variant="error")
         yield Button("Reset", id="reset")
         yield TimeDisplay("00:00:00:00")
 
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        if event.button.id == "start":
+            self.add_class("started")
+        elif event.button.id == "stop":
+            self.remove_class("started")
+
 
 class StopwatchApp(App):
-    """A textual app to manage stopwatch"""
+    """the main app"""
 
     CSS_PATH = "stopwatch03.tcss"
     BINDINGS = [("d", "toggle_dark", "Toggle dark mode")]
 
     def compose(self) -> ComposeResult:
-        """create child widgets for the app"""
         yield Header()
         yield Footer()
         yield VerticalScroll(Stopwatch(), Stopwatch(), Stopwatch())
 
     def action_toggle_dark(self) -> None:
-        """an action to toggle dark mode"""
+        """toggle dark mode"""
         self.theme = (
             "textual-dark" if self.theme == "textual-light" else "textual-light"
         )
